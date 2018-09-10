@@ -106,8 +106,8 @@ def position_control(h_des, t_hold):
     sp.pose.position.z = h_des
     while not rospy.is_shutdown():
         mission_end = rospy.get_time()
-        #if mission_end - mission_start > t_hold:
-        #    break
+        if mission_end - mission_start > t_hold and t_hold > 0:
+            break
         # Update timestamp and publish sp 
         sp.header.stamp = rospy.Time.now()
         local_pos_pub.publish(sp)
