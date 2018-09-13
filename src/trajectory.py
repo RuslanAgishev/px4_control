@@ -58,13 +58,42 @@ def trajgen(mode='setpoint_relative',number_of_points=200, x_des=0,y_des=0,z_des
     	z0 = lp.pose.position.z
     	x = np.linspace(x0,x0+x_des,number_of_points)
     	y = np.linspace(y0,y0+y_des,number_of_points)
-    	z = np.linspace(z0,z_des,number_of_points)
+    	z = np.linspace(z0,z0+z_des,number_of_points)
     elif mode=='circle':
         R = 0.5
         x = R*np.cos( np.linspace(0,radians(360),number_of_points) )
         y = R*np.sin( np.linspace(0,radians(360),number_of_points) )
         z = np.ones(number_of_points)
     return x,y,z
+
+def marker_search():
+	# searching landing place location
+    '''
+    rospy.loginfo('Searching for the marker...')
+    sp.pose.position = lp.pose.position
+    while not ardata.markers:
+        # Update timestamp and publish sp 
+        sp.header.stamp = rospy.Time.now()
+        local_pos_pub.publish(sp)
+        rospy.Subscriber('/ar_pose_marker', AlvarMarkers, marker_cb)
+        rate.sleep()
+    rospy.loginfo('Marker is found')
+
+    # quadrotor aligning with the marker (yaw)
+    rospy.loginfo('Orienting quadrotor before landing...')
+    qm = np.zeros(4)
+    qm[0] = ardata.markers[0].pose.pose.orientation.x
+    qm[1] = ardata.markers[0].pose.pose.orientation.y
+    qm[2] = ardata.markers[0].pose.pose.orientation.z
+    qm[3] = ardata.markers[0].pose.pose.orientation.w
+    _,_,yaw_marker =  euler_from_quaternion(qm)
+    q_des = quaternion_from_euler(0,0,yaw_marker)
+    sp.header = ardata.markers[0].header
+    sp.pose.orientation.x = q_des[0]
+    sp.pose.orientation.y = q_des[1]
+    sp.pose.orientation.z = q_des[2]
+    sp.pose.orientation.w = q_des[3]
+    '''
 
 def takeoff(height):
     prev_state = current_state
@@ -149,7 +178,7 @@ def position_control(setpoints):
     number_of_setpoints = setpoints.shape[0]
     for i in range(number_of_setpoints):
 	    x_des = setpoints[i][0]; y_des = setpoints[i][1]; z_des = setpoints[i][2]
-	    x,y,z = trajgen(mode='setpoint_global',x_des=x_des,y_des=y_des,z_des=z_des)
+	    x,y,z = trajgen(mode='setpoint_relative',x_des=x_des,y_des=y_des,z_des=z_des)
 	    rospy.loginfo('Moving to the setpoint: ('+str(x_des)+','+str(y_des)+','+str(z_des)+')')
 	    for i in range(len(x)):
 	    	sp.pose.position.x = x[i]
@@ -159,31 +188,6 @@ def position_control(setpoints):
 	    	rate.sleep()
 	    holding(x[-1],y[-1],z[-1],holdtime=5.)
 
-    # searching landing place location
-    rospy.loginfo('Searching for the marker...')
-    sp.pose.position = lp.pose.position
-    while not ardata.markers:
-        # Update timestamp and publish sp 
-        sp.header.stamp = rospy.Time.now()
-        local_pos_pub.publish(sp)
-        rospy.Subscriber('/ar_pose_marker', AlvarMarkers, marker_cb)
-        rate.sleep()
-    rospy.loginfo('Marker is found')
-
-    # quadrotor aligning with the marker (yaw)
-    rospy.loginfo('Orienting quadrotor before landing...')
-    qm = np.zeros(4)
-    qm[0] = ardata.markers[0].pose.pose.orientation.x
-    qm[1] = ardata.markers[0].pose.pose.orientation.y
-    qm[2] = ardata.markers[0].pose.pose.orientation.z
-    qm[3] = ardata.markers[0].pose.pose.orientation.w
-    _,_,yaw_marker =  euler_from_quaternion(qm)
-    q_des = quaternion_from_euler(0,0,yaw_marker)
-    sp.header = ardata.markers[0].header
-    sp.pose.orientation.x = q_des[0]
-    sp.pose.orientation.y = q_des[1]
-    sp.pose.orientation.z = q_des[2]
-    sp.pose.orientation.w = q_des[3]
     
     # hold position before landing
     holding(x[-1],y[-1],z[-1],holdtime=5.)
@@ -216,7 +220,7 @@ if __name__ == '__main__':
         if args.x and args.y and args.z is not None:
         	position_control( np.array([ [args.x[0], args.y[0], args.z[0]] ]) )
         else:
-        	position_control( np.array([ [1,1,1], [2,2,2] ]) )
+        	position_control( np.array([ [0,0,2], [-1,-1,0], [2,0,0], [0,2,0], [-2,0,0], [0,-2,0], [1,1,0] ]) )
     except rospy.ROSInterruptException:
         pass
 
