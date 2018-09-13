@@ -169,10 +169,10 @@ def holding(x,y,z,holdtime):
 
 
 def position_control(setpoints):
+    x_home = lp.pose.position.x; y_home = lp.pose.position.y
     takeoff(height=1)
-
     # hold position before trajectory
-    holding(lp.pose.position.x, lp.pose.position.y, 1, holdtime=5.)
+    holding(x_home, y_home, z=1, holdtime=5.)
     
     # trajectory generation
     number_of_setpoints = setpoints.shape[0]
@@ -188,12 +188,8 @@ def position_control(setpoints):
 	    	rate.sleep()
 	    holding(x[-1],y[-1],z[-1],holdtime=5.)
 
-    
-    # hold position before landing
-    holding(x[-1],y[-1],z[-1],holdtime=5.)
-
     rospy.loginfo('Landing...')
-    landing()
+    landing(x_home, y_home)
 
     # disarming
     last_request = rospy.get_time()
@@ -220,7 +216,8 @@ if __name__ == '__main__':
         if args.x and args.y and args.z is not None:
         	position_control( np.array([ [args.x[0], args.y[0], args.z[0]] ]) )
         else:
-        	position_control( np.array([ [0,0,2], [-1,-1,0], [2,0,0], [0,2,0], [-2,0,0], [0,-2,0], [1,1,0] ]) )
+        	#position_control( np.array([ [0,0,2], [-1,-1,0], [2,0,0], [0,2,0], [-2,0,0], [0,-2,0], [1,1,0] ]) )
+        	position_control( np.array([ [0,0,0.5], [1,0,0], [1,0,-1.5] ]) )
     except rospy.ROSInterruptException:
         pass
 
