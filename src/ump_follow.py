@@ -2,8 +2,7 @@
 
 import rospy
 import mavros
-from geometry_msgs.msg import PoseStamped
-from ar_track_alvar_msgs.msg import AlvarMarkers
+from geometry_msgs.msg import PoseStamped, TransformStamped
 from mavros_msgs.msg import State 
 from mavros_msgs.srv import CommandBool, SetMode
 from tf.transformations import *
@@ -28,16 +27,18 @@ def locpos_cb(locpos):
     lp = locpos
 
 # callback method for marker local position
-ardata = AlvarMarkers()
-def marker_cb(data):
-    global ardata
-    ardata = data
+ump = TransformStamped()
+def ump_cb(data):
+    global ump
+    ump = data
 
 local_pos_sub = rospy.Subscriber('/mavros/local_position/pose', PoseStamped, locpos_cb)
 local_pos_pub = rospy.Publisher('/mavros/setpoint_position/local', PoseStamped, queue_size=10)
 state_sub = rospy.Subscriber('/mavros/state', State, state_cb)
 arming_client = rospy.ServiceProxy('/mavros/cmd/arming', CommandBool)
 set_mode_client = rospy.ServiceProxy('/mavros/set_mode', SetMode) 
+ump_pos_sub = rospy.Subscriber('/vicon/ump/ump', TransformStamped, ump_cb)
+
 
 def trajgen(mode='setpoint_relative',number_of_points=200, x_des=0,y_des=0,z_des=0):
     if mode=='line':
@@ -66,34 +67,6 @@ def trajgen(mode='setpoint_relative',number_of_points=200, x_des=0,y_des=0,z_des
         z = np.ones(number_of_points)
     return x,y,z
 
-def marker_search():
-	# searching landing place location
-    '''
-    rospy.loginfo('Searching for the marker...')
-    sp.pose.position = lp.pose.position
-    while not ardata.markers:
-        # Update timestamp and publish sp 
-        sp.header.stamp = rospy.Time.now()
-        local_pos_pub.publish(sp)
-        rospy.Subscriber('/ar_pose_marker', AlvarMarkers, marker_cb)
-        rate.sleep()
-    rospy.loginfo('Marker is found')
-
-    # quadrotor aligning with the marker (yaw)
-    rospy.loginfo('Orienting quadrotor before landing...')
-    qm = np.zeros(4)
-    qm[0] = ardata.markers[0].pose.pose.orientation.x
-    qm[1] = ardata.markers[0].pose.pose.orientation.y
-    qm[2] = ardata.markers[0].pose.pose.orientation.z
-    qm[3] = ardata.markers[0].pose.pose.orientation.w
-    _,_,yaw_marker =  euler_from_quaternion(qm)
-    q_des = quaternion_from_euler(0,0,yaw_marker)
-    sp.header = ardata.markers[0].header
-    sp.pose.orientation.x = q_des[0]
-    sp.pose.orientation.y = q_des[1]
-    sp.pose.orientation.z = q_des[2]
-    sp.pose.orientation.w = q_des[3]
-    '''
 
 def takeoff(height):
     prev_state = current_state
@@ -149,8 +122,7 @@ def takeoff(height):
         local_pos_pub.publish(sp)
         rate.sleep()
 
-
-def landing(x_land,y_land):
+def landing(x_land, y_land):
     while sp.pose.position.z > -0.5:
         sp.header.stamp = rospy.Time.now()
         sp.pose.position.x = x_land
@@ -171,57 +143,45 @@ def holding(x,y,z,holdtime):
     	rate.sleep()
 
 
-def position_control(setpoints):
+def position_control():
     x_home = lp.pose.position.x; y_home = lp.pose.position.y
     takeoff(height=1)
     # hold position before trajectory
     holding(x_home, y_home, z=1, holdtime=5.)
     
-    # trajectory generation
-    number_of_setpoints = setpoints.shape[0]
-    for i in range(number_of_setpoints):
-	    x_des = setpoints[i][0]; y_des = setpoints[i][1]; z_des = setpoints[i][2]
-	    x,y,z = trajgen(mode='setpoint_relative',x_des=x_des,y_des=y_des,z_des=z_des)
-	    rospy.loginfo('Moving to the setpoint: ('+str(x_des)+','+str(y_des)+','+str(z_des)+')')
-	    for i in range(len(x)):
-	    	sp.pose.position.x = x[i]
-	    	sp.pose.position.y = y[i]
-	    	sp.pose.position.z = z[i]
-	    	local_pos_pub.publish(sp)
-	    	rate.sleep()
-	    holding(x[-1],y[-1],z[-1],holdtime=5.)
+    x_ump = ump.transform.translation.x; y_ump = ump.transform.translation.y; z_ump = ump.transform.translation.z
+    x,y,z = trajgen(mode='setpoint_global',x_des=x_ump,y_des=y_ump,z_des=z_ump+1)
+    rospy.loginfo('Moving to the UMP position: ('+str(round(x_ump,2))+','+str(round(y_ump,2))+','+str(round(z_ump+1,2))+')')
+    for i in range(len(x)):
+    	sp.pose.position.x = x[i]
+    	sp.pose.position.y = y[i]
+    	sp.pose.position.z = z[i]
+    	local_pos_pub.publish(sp)
+    	rate.sleep()
 
-    rospy.loginfo('Landing...')
-    landing(lp.pose.position.x, lp.pose.position.y)
-
-    # disarming
-    last_request = rospy.get_time()
-    while current_state.armed or current_state.mode == "OFFBOARD":
-        now = rospy.get_time()
-        if current_state.armed and (now - last_request > 2.):
-            arming_client(False)
-        if current_state.mode == "OFFBOARD" and (now - last_request > 2.):
-            set_mode_client(base_mode=0, custom_mode="MANUAL")
-            last_request = now
+    rospy.loginfo('UMP following...')
+    while not rospy.is_shutdown():
+        x_ump = ump.transform.translation.x; y_ump = ump.transform.translation.y; z_ump = ump.transform.translation.z
+        sp.pose.position.x = x_ump
+        sp.pose.position.y = y_ump
+        sp.pose.position.z = z_ump+1
+        sp.pose.orientation.x = ump.transform.rotation.x
+        sp.pose.orientation.y = ump.transform.rotation.y
+        sp.pose.orientation.z = ump.transform.rotation.z
+        sp.pose.orientation.w = ump.transform.rotation.w
+        local_pos_pub.publish(sp)
         rate.sleep()
+
+    rospy.loginfo('Landing at current position...')
+    landing(lp.pose.position.x, lp.pose.position.y)
 
 
 if __name__ == '__main__':
     try:
-    	# command-line arguments for desired location
-    	parser = argparse.ArgumentParser(description="Command line tool for setting desired altitude and time of holding it.")
-        parser.add_argument('-x', type=float, nargs=1, help="Setpoint x-position")
-        parser.add_argument('-y', type=float, nargs=1, help="Setpoint y-position")
-        parser.add_argument('-z', type=float, nargs=1, help="Setpoint z-position")
-        args = parser.parse_args(rospy.myargv(argv=sys.argv)[1:])
         # main function
         rospy.init_node('des_location', anonymous=True)
-        if args.x and args.y and args.z is not None:
-        	position_control( np.array([ [args.x[0], args.y[0], args.z[0]] ]) )
-        else:
-        	position_control( np.array([ [1,0,0], [0,1,0], [1,1,0] ]) )
-        	#position_control( np.array([ [0,0,0.5], [0,1,0], [0,0.7,-1.5] ]) )
-    except rospy.ROSInterruptException:
+        position_control()
+    except:
         pass
 
         
