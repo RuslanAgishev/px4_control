@@ -149,11 +149,8 @@ def takeoff(height):
         local_pos_pub.publish(sp)
         rate.sleep()
 
-<<<<<<< HEAD
-def landing(x_land, y_land):
-=======
+
 def landing(x_land,y_land):
->>>>>>> 240f2c9a87c6a96a645fa7f1a2a197222e3f4c65
     while sp.pose.position.z > -0.5:
         sp.header.stamp = rospy.Time.now()
         sp.pose.position.x = x_land
