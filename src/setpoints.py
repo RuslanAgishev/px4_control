@@ -11,6 +11,7 @@ from math import *
 import numpy as np
 import argparse
 import sys
+import uav_traejectory
 
 current_state = State()
 offb_set_mode = SetMode()
@@ -66,113 +67,6 @@ def trajgen(mode='setpoint_relative',number_of_points=200, x_des=0,y_des=0,z_des
         z = np.ones(number_of_points)
     return x,y,z
 
-def marker_search():
-	# searching landing place location
-    '''
-    rospy.loginfo('Searching for the marker...')
-    sp.pose.position = lp.pose.position
-    while not ardata.markers:
-        # Update timestamp and publish sp 
-        sp.header.stamp = rospy.Time.now()
-        local_pos_pub.publish(sp)
-        rospy.Subscriber('/ar_pose_marker', AlvarMarkers, marker_cb)
-        rate.sleep()
-    rospy.loginfo('Marker is found')
-
-    # quadrotor aligning with the marker (yaw)
-    rospy.loginfo('Orienting quadrotor before landing...')
-    qm = np.zeros(4)
-    qm[0] = ardata.markers[0].pose.pose.orientation.x
-    qm[1] = ardata.markers[0].pose.pose.orientation.y
-    qm[2] = ardata.markers[0].pose.pose.orientation.z
-    qm[3] = ardata.markers[0].pose.pose.orientation.w
-    _,_,yaw_marker =  euler_from_quaternion(qm)
-    q_des = quaternion_from_euler(0,0,yaw_marker)
-    sp.header = ardata.markers[0].header
-    sp.pose.orientation.x = q_des[0]
-    sp.pose.orientation.y = q_des[1]
-    sp.pose.orientation.z = q_des[2]
-    sp.pose.orientation.w = q_des[3]
-    '''
-
-def takeoff(height):
-    prev_state = current_state
-    global rate
-    rate = rospy.Rate(20.0) # MUST be more then 2Hz
-
-    # send a few setpoints before starting
-    sp.pose.position.x = lp.pose.position.x
-    sp.pose.position.y = lp.pose.position.y
-    sp.pose.position.z = -1
-    q = quaternion_from_euler(0,0,radians(90))
-    sp.pose.orientation = lp.pose.orientation
-    for i in range(100):
-        local_pos_pub.publish(sp)
-        rate.sleep()
-    
-    # wait for FCU connection
-    while not current_state.connected:
-        rate.sleep()
-
-    last_request = rospy.get_time()
-    while not rospy.is_shutdown():
-        now = rospy.get_time()
-        if current_state.mode != "OFFBOARD" and (now - last_request > 2.):
-            set_mode_client(base_mode=0, custom_mode="OFFBOARD")
-            last_request = now 
-        else:
-            if not current_state.armed and (now - last_request > 2.):
-               arming_client(True)
-               last_request = now 
-
-        # older versions of PX4 always return success==True, so better to check Status instead
-        if prev_state.armed != current_state.armed:
-            rospy.loginfo("Vehicle armed: %r" % current_state.armed)
-
-        if prev_state.mode != current_state.mode: 
-            rospy.loginfo("Current mode: %s" % current_state.mode)
-        prev_state = current_state
-
-        # Update timestamp and publish sp 
-        sp.header.stamp = rospy.Time.now()
-        local_pos_pub.publish(sp)
-
-        if current_state.armed:
-        	break
-        rate.sleep()
-
-    rospy.loginfo('Takeoff')
-    sp.pose.position.z = 0
-    while sp.pose.position.z < height:
-        sp.header.stamp = rospy.Time.now()
-        sp.pose.position.z += 0.01
-        local_pos_pub.publish(sp)
-        rate.sleep()
-
-<<<<<<< HEAD
-def landing(x_land, y_land):
-=======
-def landing(x_land,y_land):
->>>>>>> 240f2c9a87c6a96a645fa7f1a2a197222e3f4c65
-    while sp.pose.position.z > -0.5:
-        sp.header.stamp = rospy.Time.now()
-        sp.pose.position.x = x_land
-        sp.pose.position.y = y_land
-        sp.pose.position.z -= 0.01
-        local_pos_pub.publish(sp)
-        rate.sleep()
-
-def holding(x,y,z,holdtime):
-    sp.pose.position.x = x
-    sp.pose.position.y = y
-    sp.pose.position.z = z
-    last_request = rospy.get_time()
-    now = -1
-    while rospy.Duration( now - last_request ) < rospy.Duration(holdtime) :
-    	now = rospy.get_time()
-    	local_pos_pub.publish(sp)
-    	rate.sleep()
-
 
 def position_control(setpoints):
     x_home = lp.pose.position.x; y_home = lp.pose.position.y
@@ -195,18 +89,9 @@ def position_control(setpoints):
 	    holding(x[-1],y[-1],z[-1],holdtime=5.)
 
     rospy.loginfo('Landing...')
-    landing(lp.pose.position.x, lp.pose.position.y)
+    landing(x_home, y_home)
 
-    # disarming
-    last_request = rospy.get_time()
-    while current_state.armed or current_state.mode == "OFFBOARD":
-        now = rospy.get_time()
-        if current_state.armed and (now - last_request > 2.):
-            arming_client(False)
-        if current_state.mode == "OFFBOARD" and (now - last_request > 2.):
-            set_mode_client(base_mode=0, custom_mode="MANUAL")
-            last_request = now
-        rate.sleep()
+    disarming(state=current_state)
 
 
 if __name__ == '__main__':

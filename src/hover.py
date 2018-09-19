@@ -54,9 +54,11 @@ def landing():
 def position_control(h_des, t_hold):
     rospy.init_node('des_location', anonymous=True)
     prev_state = current_state
-    global rate
+    global rate, x_home, y_home
     rate = rospy.Rate(20.0) # MUST be more then 2Hz
 
+    x_home = lp.pose.position.x
+    y_home = lp.pose.position.y
     # send a few setpoints before starting
     sp.pose.position.x = lp.pose.position.x
     sp.pose.position.y = lp.pose.position.y
@@ -102,7 +104,8 @@ def position_control(h_des, t_hold):
     # mission
     rospy.loginfo('Position holding...')
     mission_start = rospy.get_time()
-    sp.pose.position = lp.pose.position
+    sp.pose.position.x = x_home
+    sp.pose.position.y = y_home
     sp.pose.position.z = h_des
     while not rospy.is_shutdown():
         mission_end = rospy.get_time()
