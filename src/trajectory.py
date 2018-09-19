@@ -149,9 +149,11 @@ def takeoff(height):
         local_pos_pub.publish(sp)
         rate.sleep()
 
-def landing():
+def landing(x_land, y_land):
     while sp.pose.position.z > -0.5:
         sp.header.stamp = rospy.Time.now()
+        sp.pose.position.x = x_land
+        sp.pose.position.y = y_land
         sp.pose.position.z -= 0.01
         local_pos_pub.publish(sp)
         rate.sleep()
@@ -189,7 +191,7 @@ def position_control(setpoints):
 	    holding(x[-1],y[-1],z[-1],holdtime=5.)
 
     rospy.loginfo('Landing...')
-    landing(x_home, y_home)
+    landing(lp.pose.position.x, lp.pose.position.y)
 
     # disarming
     last_request = rospy.get_time()
