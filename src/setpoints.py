@@ -219,8 +219,8 @@ if __name__ == '__main__':
         if args.x and args.y and args.z is not None:
         	position_control( np.array([ [args.x[0], args.y[0], args.z[0]] ]) )
         else:
-        	position_control( np.array([ [1,0,0], [0,1,0], [1,1,0] ]) )
-        	#position_control( np.array([ [0,0,0.5], [0,1,0], [0,0.7,-1.5] ]) )
+        	#position_control( np.array([ [1,0,0], [0,1,0], [1,1,0] ]) )
+        	position_control( np.array([ [0,0,0.5], [0,1,0], [0,0.7,-1.5] ]) )
     except rospy.ROSInterruptException:
         pass
 
