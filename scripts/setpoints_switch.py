@@ -11,6 +11,8 @@ from math import *
 import numpy as np
 import argparse
 import sys
+#import RPi.GPIO as GPIO
+
 
 current_state = State()
 offb_set_mode = SetMode()
@@ -159,12 +161,26 @@ def landing(x_land,y_land):
         local_pos_pub.publish(sp)
         rate.sleep()
 
-def holding(x,y,z,holdtime):
+def holding(x,y,z,holdtime,switch=''):
+    '''
+    # switching IR-marker
+    PIN=17
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(PIN, GPIO.OUT)
     sp.pose.position.x = x
     sp.pose.position.y = y
     sp.pose.position.z = z
+    if switch=='small':
+        GPIO.output(PIN, 0)
+    elif switch=='big':
+        GPIO.output(PIN, 1)
+    else:
+        pass
+    # end switching
+    '''
     last_request = rospy.get_time()
     now = -1
+
     while rospy.Duration( now - last_request ) < rospy.Duration(holdtime) :
     	now = rospy.get_time()
     	local_pos_pub.publish(sp)
