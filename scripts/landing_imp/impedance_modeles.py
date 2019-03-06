@@ -26,7 +26,7 @@ def velocity_impedance(velocity, imp_pose_prev, imp_vel_prev, time_prev):
 	time_step = time.time() - time_prev
 	time_prev = time.time()
 	t = [0. , time_step]
-	F = abs(velocity) * F_coeff
+	F = F_coeff * abs(velocity)
 
 	state0_x = [imp_pose_prev[0], imp_vel_prev[0]]
 	state_x = odeint(MassSpringDamper, state0_x, t, args=(F[0],))

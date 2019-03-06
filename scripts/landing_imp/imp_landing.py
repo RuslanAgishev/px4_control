@@ -40,12 +40,13 @@ state_sub = rospy.Subscriber('/mavros/state', State, state_cb)
 arming_client = rospy.ServiceProxy('/mavros/cmd/arming', CommandBool)
 set_mode_client = rospy.ServiceProxy('/mavros/set_mode', SetMode)
 
+
 def takeoff(height):
     rospy.loginfo("Takeoff")
     sp.pose.position.z = 0
     while sp.pose.position.z < height:
         sp.header.stamp = rospy.Time.now()
-        sp.pose.position.z += 0.1
+        sp.pose.position.z += 0.02
         local_pos_pub.publish(sp)
         rate.sleep()
 
@@ -57,9 +58,9 @@ def landing():
     imp_vel_prev = np.array( [0,0,0] )
     imp_time_prev = time.time()
 
-    while sp.pose.position.z > -0.5:
+    while sp.pose.position.z > -0.5 and not rospy.is_shutdown():
         sp.header.stamp = rospy.Time.now()
-        sp.pose.position.z -= 0.02
+        sp.pose.position.z -= 0.01
         """
         TODO: correct landing pose with impedance model
         """
@@ -69,8 +70,9 @@ def landing():
         imp_vel_prev = imp_vel
         
         # correct pose with impedance model
+        # if imp_pose[2] > 0.03: imp_pose[2] = 0.03
         sp.pose.position.z += imp_pose[2]
-        print drone_vel[2]
+        print imp_pose[2]
 
         local_pos_pub.publish(sp)
         rate.sleep()
@@ -82,6 +84,7 @@ def position_control(h_des, t_hold):
     global rate, x_home, y_home
     rate = rospy.Rate(20.0) # MUST be more then 2Hz
 
+    time.sleep(0.5)
     x_home = lp.pose.position.x
     y_home = lp.pose.position.y
     # send a few setpoints before starting
@@ -164,7 +167,7 @@ if __name__ == '__main__':
             h_des = args.altitude[0]
             t_hold = args.holdtime[0]
         except:
-            h_des = 1.0; t_hold = 2.0
+            h_des = 1.0; t_hold = 5.0
             print("Desired altitude: 1 m; holding time: 2 sec")
         position_control(h_des, t_hold)
     except rospy.ROSInterruptException:
