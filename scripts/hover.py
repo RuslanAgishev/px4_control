@@ -119,6 +119,7 @@ def position_control(h_des, t_hold):
     landing()
 
     # disarming
+    '''
     while current_state.armed or current_state.mode == "OFFBOARD":
         now = rospy.get_time()
         if current_state.armed:
@@ -127,6 +128,7 @@ def position_control(h_des, t_hold):
             set_mode_client(base_mode=0, custom_mode="MANUAL")
             last_request = now
         rate.sleep()
+    '''
 
 if __name__ == '__main__':
     try:
@@ -134,11 +136,8 @@ if __name__ == '__main__':
         parser.add_argument('-alt', '--altitude', type=float, nargs=1, help="Desired takeoff altitude")
         parser.add_argument('-t', '--holdtime', type=float, nargs=1, help="Altitude holding time")
         args = parser.parse_args(rospy.myargv(argv=sys.argv)[1:])
-        try:
-            h_des = args.altitude[0]
-            t_hold = args.holdtime[0]
-            position_control(h_des, t_hold)
-        except:
-            print("Specify desired altitude and time: add -alt and -t parameters")
+        h_des = args.altitude[0]
+        t_hold = args.holdtime[0]
+        position_control(h_des, t_hold)
     except rospy.ROSInterruptException:
         pass
