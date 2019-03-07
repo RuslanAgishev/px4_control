@@ -45,7 +45,7 @@ def takeoff(height):
     sp.pose.position.z = 0
     while sp.pose.position.z < height:
         sp.header.stamp = rospy.Time.now()
-        sp.pose.position.z += 0.1
+        sp.pose.position.z += 0.05
         local_pos_pub.publish(sp)
         rate.sleep()
 
@@ -59,7 +59,7 @@ def landing():
 
     while sp.pose.position.z > -0.5:
         sp.header.stamp = rospy.Time.now()
-        sp.pose.position.z -= 0.02
+        sp.pose.position.z -= 0.01
         """
         TODO: correct landing pose with impedance model
         """
@@ -164,7 +164,7 @@ if __name__ == '__main__':
             h_des = args.altitude[0]
             t_hold = args.holdtime[0]
         except:
-            h_des = 1.0; t_hold = 2.0
+            h_des = 1.0; t_hold = 10.0
             print("Desired altitude: 1 m; holding time: 2 sec")
         position_control(h_des, t_hold)
     except rospy.ROSInterruptException:
