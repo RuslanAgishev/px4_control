@@ -34,18 +34,19 @@ def vel_cb(data):
     drone_vel = np.array([data.twist.linear.x, data.twist.linear.y, data.twist.linear.z])
 
 local_pos_sub = rospy.Subscriber('/mavros/local_position/pose', PoseStamped, locpos_cb)
-vel_sub = rospy.Subscriber('/mavros/local_position/velocity', TwistStamped, vel_cb)
+vel_sub = rospy.Subscriber('/mavros/local_position/velocity_local', TwistStamped, vel_cb)
 local_pos_pub = rospy.Publisher('/mavros/setpoint_position/local', PoseStamped, queue_size=10)
 state_sub = rospy.Subscriber('/mavros/state', State, state_cb)
 arming_client = rospy.ServiceProxy('/mavros/cmd/arming', CommandBool)
 set_mode_client = rospy.ServiceProxy('/mavros/set_mode', SetMode)
+
 
 def takeoff(height):
     rospy.loginfo("Takeoff")
     sp.pose.position.z = 0
     while sp.pose.position.z < height:
         sp.header.stamp = rospy.Time.now()
-        sp.pose.position.z += 0.05
+        sp.pose.position.z += 0.02
         local_pos_pub.publish(sp)
         rate.sleep()
 
@@ -57,20 +58,19 @@ def landing():
     imp_vel_prev = np.array( [0,0,0] )
     imp_time_prev = time.time()
 
-    while sp.pose.position.z > -0.5:
+    while sp.pose.position.z > -0.5 and not rospy.is_shutdown():
         sp.header.stamp = rospy.Time.now()
         sp.pose.position.z -= 0.01
-        """
-        TODO: correct landing pose with impedance model
-        """
+
         # ipedance terms calculation
         imp_pose, imp_vel, imp_time_prev = impedance_modeles.velocity_impedance(drone_vel, imp_pose_prev, imp_vel_prev, imp_time_prev)
         imp_pose_prev = imp_pose
         imp_vel_prev = imp_vel
         
         # correct pose with impedance model
+        # if imp_pose[2] > 0.03: imp_pose[2] = 0.03
         sp.pose.position.z += imp_pose[2]
-        print drone_vel[2]
+        print imp_pose[2]
 
         local_pos_pub.publish(sp)
         rate.sleep()
@@ -82,6 +82,7 @@ def position_control(h_des, t_hold):
     global rate, x_home, y_home
     rate = rospy.Rate(20.0) # MUST be more then 2Hz
 
+    time.sleep(1.0)
     x_home = lp.pose.position.x
     y_home = lp.pose.position.y
     # send a few setpoints before starting
@@ -164,7 +165,7 @@ if __name__ == '__main__':
             h_des = args.altitude[0]
             t_hold = args.holdtime[0]
         except:
-            h_des = 1.0; t_hold = 10.0
+            h_des = 1.0; t_hold = 5.0
             print("Desired altitude: 1 m; holding time: 2 sec")
         position_control(h_des, t_hold)
     except rospy.ROSInterruptException:

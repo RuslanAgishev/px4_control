@@ -13,7 +13,8 @@ def MassSpringDamper(state,t,F, mode='critically_damped'):
 	elif mode=='overdamped':
 		m = 1.0; k = 2; b = 2*sqrt(m*k)+2 # overdamped
 	else:
-		m = 1.0; k = 2; b = 2*sqrt(m*k) # critically damped
+		# m = 1.0; k = 2; b = 2*sqrt(m*k) # critically damped
+		m = 1.0; k = 0.4; b = 2*sqrt(m*k)
 	xdd = -(b/m)*xd - (k/m)*x + F/m
 	return [xd, xdd]
 
@@ -21,7 +22,7 @@ def MassSpringDamper(state,t,F, mode='critically_damped'):
 y0 = [np.pi - 0.1, 0.0]
 M = 10
 t = np.linspace(0, 10, 101)
-mode = 'overdamped'
+mode = 'critically_damped'
 sol = odeint(MassSpringDamper, y0, t, args=(M,mode,))
 
 
