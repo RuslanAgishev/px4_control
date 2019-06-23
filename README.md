@@ -1,7 +1,7 @@
 # PX4 drone control
 ROS node to control a px4-firmware drone. Waypoints following, intelligent landing.
 
-![jmavsim_flight](https://github.com/RuslanAgishev/px4_control/blob/master/sim_flight.png | width=200)
+![jmavsim_flight](https://github.com/RuslanAgishev/px4_control/blob/master/sim_flight.png)
 
 In order to fly in simulator:
 
