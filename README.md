@@ -3,7 +3,7 @@ ROS node to control a px4-firmware drone. Waypoints following, intelligent landi
 
 ![jmavsim_flight](https://github.com/RuslanAgishev/px4_control/blob/master/sim_flight.png)
 
-In order to fly in simulator:
+In order to fly in a simulator:
 
 - launch a simulated environment (Jmavsim):
 ```bash
