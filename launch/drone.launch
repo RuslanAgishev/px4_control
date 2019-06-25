@@ -2,12 +2,12 @@
 <launch>
     <node pkg="vicon_bridge" type="vicon_bridge" name="vicon" output="log">
         <param name="stream_mode" value="ClientPull" type="str" />
-        <param name="datastream_hostport" value="192.168.1.136:801" type="str" />
+        <param name="datastream_hostport" value="192.168.10.1:801" type="str" />
         <param name="tf_ref_frame_id" value="/world" type="str" />
     </node>
 
     <include file="$(find mavros)/launch/px4.launch">
-        <arg name="gcs_url" value="udp://@192.168.1.183"/>
+        <arg name="gcs_url" value="udp://@192.168.1.32"/>
         <arg name="fcu_url" value="/dev/ttyUSB0:921600"/>
         <!-- <arg name="fcu_url" value="/dev/ttyAMA0:921600"/> -->
     </include>
