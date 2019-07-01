@@ -32,11 +32,11 @@ def callback(data):
 	
 
 	pub.publish(data_to_publish)
-	print(data_to_publish)
+	# print(data_to_publish)
 
 def mocap2pixhawk():
 	rospy.init_node('convert', anonymous=True)
-	rospy.Subscriber('/vicon/cf1/cf1', TransformStamped, callback)
+	rospy.Subscriber('/vicon/DroneArm/DroneArm', TransformStamped, callback)
 	rospy.spin()
 
 if __name__ == '__main__':

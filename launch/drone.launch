@@ -7,7 +7,7 @@
     </node>
 
     <include file="$(find mavros)/launch/px4.launch">
-        <arg name="gcs_url" value="udp://@192.168.1.183"/>
+        <arg name="gcs_url" value="udp://@192.168.1.32"/>
         <arg name="fcu_url" value="/dev/ttyUSB0:921600"/>
         <!-- <arg name="fcu_url" value="/dev/ttyAMA0:921600"/> -->
     </include>
