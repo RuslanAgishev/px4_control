@@ -17,12 +17,12 @@ sudo apt-get install ros-melodic-mavros ros-melodic-mavros-extras
 wget https://raw.githubusercontent.com/mavlink/mavros/master/mavros/scripts/install_geographiclib_datasets.sh
 sudo bash install_geographiclib_datasets.sh
 ```
-3. Clone and build PX4 Firmware:
+3. Clone and build PX4 [Firmware](https://dev.px4.io/v1.9.0/en/setup/building_px4.html):
 ```bash
 mkdir ~/src; cd ~/src
 git clone https://github.com/PX4/Firmware.git --recursive
 cd ~/src/Firmware
-make px4_sitl_default jmavsim
+make px4_sitl_default
 ```
 4. Create ROS catkin workspace and build the package:
 ```bash
