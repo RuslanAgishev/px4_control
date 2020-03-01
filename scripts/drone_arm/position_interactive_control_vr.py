@@ -26,10 +26,10 @@ if __name__ == '__main__':
 			drone_pose_init = drone.pose
 			initialized = True
 		dx, dy, dz = human.position() - human_pose_init
-		tmp = dx; dx = -dy; dy = tmp
+		# tmp = dx; dx = -dy; dy = tmp # switch coordinate axes for correct mapping
 		drone.sp = np.array([drone_pose_init[0] + pos_coef*dx,
-							   	 drone_pose_init[1] + pos_coef*dy,
-							   	 drone_pose_init[2] + pos_coef*dz])
+							 drone_pose_init[1] + pos_coef*dy,
+							 drone_pose_init[2] + pos_coef*dz])
 		print(human.position())
 	# 	if human.position()[2] < 0.5:
 	# 		break

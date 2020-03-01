@@ -129,7 +129,7 @@ class Drone:
 
     @staticmethod
     def transform(pose):
-        # transformation: x - froward, y - left, z - up (ENU - MoCap frame)
+        # transformation: x - forward, y - left, z - up (ENU - MoCap frame)
         pose_new = np.zeros(3)
         pose_new[0] = - pose[1]
         pose_new[1] = pose[0]

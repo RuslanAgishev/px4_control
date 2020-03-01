@@ -9,10 +9,11 @@ class VRController:
 		self.orient = None # Euler angles
 		self.vr = triad_openvr.triad_openvr()
 
-
 	def position(self):
 		pose = self.vr.devices["controller_1"].get_pose_euler()
-		return np.array(pose[:3])
+		self.pose = np.array(pose[:3])
+		return self.pose
 	def orientation(self):
 		pose = self.vr.devices["controller_1"].get_pose_euler()
-		return np.array(pose[3:])
+		self.orient = np.array(pose[3:])
+		return self.orient
