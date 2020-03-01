@@ -11,14 +11,20 @@ wget https://raw.githubusercontent.com/PX4/Firmware/master/Tools/setup/requireme
 
 bash ubuntu.sh
 ```
-2. Clone and build PX4 Firmware:
+2. Install [ROS](http://wiki.ros.org/ROS/Installation) and [Mavros](https://dev.px4.io/v1.9.0/en/ros/mavros_installation.html):
+```bash
+sudo apt-get install ros-melodic-mavros ros-melodic-mavros-extras
+wget https://raw.githubusercontent.com/mavlink/mavros/master/mavros/scripts/install_geographiclib_datasets.sh
+sudo bash install_geographiclib_datasets.sh
+```
+3. Clone and build PX4 [Firmware](https://dev.px4.io/v1.9.0/en/setup/building_px4.html):
 ```bash
 mkdir ~/src; cd ~/src
 git clone https://github.com/PX4/Firmware.git --recursive
 cd ~/src/Firmware
-make px4_sitl_default jmavsim
+make px4_sitl_default
 ```
-3. Create ROS catkin workspace and build the package:
+4. Create ROS catkin workspace and build the package:
 ```bash
 mkdir -p ~/catkin_ws/src
 cd ~/catkin_ws/src
@@ -28,7 +34,7 @@ catkin_make
 source ~/catkin_ws/devel/setup.bash
 ```
 
-4. In order to fly in a simulator:
+5. In order to fly in a simulator:
 
 - launch a simulated environment (Jmavsim):
 ```bash
