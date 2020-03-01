@@ -1,8 +1,9 @@
 ## Example usage
 
-Prerequisites:
+Prerequisites (tested on Ubuntu 16.04 LTS operating system):
 1. Install HTC Vive SteamVR.
 2. ```pip2 install openvr``` OR [download](https://github.com/cmbruns/pyopenvr/releases) the installer.
+3. Setup VR environment. You can follow an [example](https://wiki.bitcraze.io/doc:lighthouse:setup) from Bitcraze.
 
 Launch jMAVsim simulator:
 ```bash
