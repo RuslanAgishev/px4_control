@@ -2,7 +2,7 @@
 
 Prerequisites:
 1. Install HTC Vive SteamVR.
-2. ```pip install openvr``` OR [download](https://github.com/cmbruns/pyopenvr/releases) the installer.
+2. ```pip2 install openvr``` OR [download](https://github.com/cmbruns/pyopenvr/releases) the installer.
 
 Launch jMAVsim simulator:
 ```bash
