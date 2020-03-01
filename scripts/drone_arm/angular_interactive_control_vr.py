@@ -22,13 +22,13 @@ if __name__ == '__main__':
 	controller = VRController()
 
 	# controller mean angle estimation
-    print('Controller mean orientation estimation...\n') 
-    time_to_eval = 0.8 # sec
-    angles = controller.orientation()
-    for i in range(int(time_to_eval*100)):
-        angles = np.vstack([angles, controller.orientation()])
-        time.sleep(0.01)
-    mean_angles = np.array([np.mean(angles[:,0]), np.mean(angles[:,1]), np.mean(angles[:,2])])
+	print('Controller mean orientation estimation...\n') 
+	time_to_eval = 0.8 # sec
+	angles = controller.orientation()
+	for i in range(int(time_to_eval*100)):
+	    angles = np.vstack([angles, controller.orientation()])
+	    time.sleep(0.01)
+	mean_angles = np.array([np.mean(angles[:,0]), np.mean(angles[:,1]), np.mean(angles[:,2])])
 
     # arm the drone and takeoff
 	drone.arm()
