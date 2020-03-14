@@ -86,6 +86,7 @@ class Drone:
         set_pose.pose.orientation.z = q[2]
         set_pose.pose.orientation.w = q[3]
         return set_pose
+        
     def publish_setpoint(self, sp, yaw=np.pi/2):
         setpoint = self.get_setpoint(sp[0], sp[1], sp[2], yaw)
         setpoint.header.stamp = rospy.Time.now()
@@ -117,7 +118,7 @@ class Drone:
             self.sp[2] -= 0.05
             self.publish_setpoint(self.sp)
             self.rate.sleep()
-        self.stop()
+        # self.stop()
 
     def stop(self):
         while self.current_state.armed or self.current_state.mode == "OFFBOARD":

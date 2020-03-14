@@ -2,11 +2,10 @@
 
 import triad_openvr
 import numpy as np
-import time
-
 
 class VRController:
-	def __init__(self):
+	def __init__(self, name="controller_1"):
+		self.name = name
 		self.pose = None # [x,y,z](m)
 		self.orient = None # Euler angles
 		self.vr = triad_openvr.triad_openvr()
@@ -16,7 +15,6 @@ class VRController:
 		return: [x,y,z]
 		"""
 		pose = self.vr.devices["controller_1"].get_pose_euler()
-		time.sleep(0.01)
 		try:
 			self.pose = np.array(pose[:3])
 		except TypeError:
@@ -24,11 +22,8 @@ class VRController:
 
 		return self.pose
 
+
 	def orientation(self):
-		"""
-		return: [yaw,pitch,roll]
-		"""
-		pose = self.vr.devices["controller_1"].get_pose_euler()
-		time.sleep(0.01)
+		pose = self.vr.devices[self.name].get_pose_euler()
 		self.orient = np.array(pose[3:])
 		return self.orient

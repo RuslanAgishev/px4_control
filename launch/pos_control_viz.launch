@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<launch>
+
+<node pkg="px4_control" 
+	type="interactive_control_vr.py" 
+	name="interactive_control" 
+	output="screen"/>
+
+<!-- <include file="$(find vicon_bridge)/launch/vicon.launch"/> -->
+<!-- <include file="$(find crazyflie_demo)/launch/connect_crazyflie4.launch"/> -->
+
+    <node
+        pkg="rviz"
+        name="$(anon rviz-1)"
+        type="rviz"
+        args="-d $(find px4_control)/config/pos_controller.rviz"
+        output="log"
+    />
+
+</launch>
