@@ -39,7 +39,7 @@ catkin_make
 source ~/catkin_ws/devel/setup.bash
 ```
 
-### Simulation
+## Simulation
 In order to fly in a simulator:
 
 1. Launch a simulated environment (Jmavsim):
@@ -57,9 +57,10 @@ roslaunch px4_control px4_sim.launch
 rosrun px4_control drone_test.py
 ```
 
-### Real drone with Vicon motion capture
+## Real drone with Vicon motion capture
+)[Referense](https://dev.px4.io/v1.9.0/en/ros/external_position_estimation.html): Using Vision or Motion Capture Systems for Position Estimation.
 
-Follow the [instructions](https://dev.px4.io/v1.9.0/en/companion_computer/pixhawk_companion.html) to set-up a communication between a ground station and drone's onboard computer:
+Follow the [instructions](https://dev.px4.io/v1.9.0/en/companion_computer/pixhawk_companion.html) to set-up a communication between a ground station and drone's onboard computer.
 
 1. Install Vicon bridge ROS package:
 ```bash
