@@ -3,7 +3,6 @@
 
     <include file="$(find skcr_core)/launch/aerovr_drone_multimaster.launch" />
 
-
 	<arg name="fcu_url" default="/dev/ttyUSB0:921600" />
 	<arg name="gcs_url" default="udp://@192.168.1.183" />  
     <!-- @192.168.1.183 - this param we change from terminal, no need to change it here -->
@@ -19,8 +18,7 @@
         <arg name="gcs_url" value="$(arg gcs_url)"/>
         <arg name="fcu_url" value="$(arg fcu_url)"/>
     </include>
+
     <node name="mocap2pixhawk" pkg="px4_control" type="mocap2pixhawk.py" output="screen" />
 
-    <!-- graphs visualization -->
-    <node pkg="rqt_plot" type="rqt_plot" name="rqt_plot1" args="/mavros/local_position/pose/pose/position/x:y:z"/>
 </launch>

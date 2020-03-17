@@ -25,4 +25,7 @@
         output="log"
     />
 
+    <!-- graphs visualization -->
+    <node pkg="rqt_plot" type="rqt_plot" name="rqt_plot1" args="/mavros/local_position/pose/pose/position/x:y:z"/>
+
 </launch>
