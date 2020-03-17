@@ -83,30 +83,42 @@ OR drone_test ON OMEGA
     Sys_companion - баудрейт указывать 921600
     
 
-## Add ip no interfaces
+## Add ip to interfaces
 
 TODO: CHANGE THIS!
 
-<!-- Check network config:
+Check network config:
 
     sudo su
     vim /etc/network/interfaces
-    (change ip to be different from lidar)
-    address 192.168.0.150 for example
-    :wq
-    exit
 
-Current config for skcr:
+    # here wlan, adress, netmask, bssid, pas 
+    auto wlan0 
 
-    # interfaces(5) file used by ifup(8) and ifdown(8)
-    auto lo
-    iface lo inet loopback
-    auto wlp58s0
-    auto eno1
-    #allow-hotplug eth0
-    iface eno1 inet static
-            address 192.168.0.150
-            netmask 255.255.255.0 -->
+
+## Configure network to get visualization remotely
+Your working computer and NUC need to now about each other.
+
+
+http://wiki.ros.org/multimaster_fkie
+
+Install multimaster_fkie to create multimaster network:
+
+    sudo apt-get install ros-kinetic-multimaster-fkie
+
+
+On your working computer:
+
+Inside /etc/hosts add IP of device you want to connect to and it's hostname (nuc@skcr):
+
+    sudo vim /etc/hosts
+    192.168.88.253 odroid
+    
+On robot:
+
+    sudo vim /etc/hosts
+    192.168.88.224 alex-System-Product-Name
+    
 
 ## Graphics in QGroundControl
 
