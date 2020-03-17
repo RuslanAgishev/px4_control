@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
 
-    <include file="$(find skcr_core)/launch/aerovr_drone_multimaster.launch" />
+    <include file="$(find px4_control)/launch/aerovr_drone_multimaster.launch" />
 
 	<arg name="fcu_url" default="/dev/ttyUSB0:921600" />
 	<arg name="gcs_url" default="udp://@192.168.1.183" />  
