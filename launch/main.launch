@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <launch>
 
+    <!-- Now using ROS_MASTER_URI, not multimaster -->
     <!-- <include file="$(find px4_control)/launch/aerovr_omega_multimaster.launch" /> -->
 
     <node pkg="px4_control" 
@@ -14,18 +15,18 @@
         name="drone_test" 
         output="screen"/> -->
 
-<!-- <include file="$(find vicon_bridge)/launch/vicon.launch"/> -->
+<include file="$(find vicon_bridge)/launch/vicon.launch"/>
 <!-- <include file="$(find crazyflie_demo)/launch/connect_crazyflie4.launch"/> -->
 
-<!--     <node
+    <node
         pkg="rviz"
         name="$(anon rviz-1)"
         type="rviz"
-        args="-d $(find px4_control)/config/pos_controller.rviz"
+        args="-d $(find px4_control)/config/f450_pos_controller.rviz"
         output="log"
-    /> -->
+    />
 
     <!-- graphs visualization -->
-<!--     <node pkg="rqt_plot" type="rqt_plot" name="rqt_plot1" args="/mavros/local_position/pose/pose/position/x:y:z"/> -->
+    <node pkg="rqt_plot" type="rqt_plot" name="rqt_plot1" args="/mavros/local_position/pose/pose/position/x:y:z"/>
 
 </launch>
