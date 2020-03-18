@@ -40,9 +40,12 @@
 
 ## Tests
 
-    # vicon
+    # vicon  (using ethernet connection!)
+    ping 192.168.10.1
     roslaunch vicon_bridge vicon.launch
-    
+    rostopic hz /vicon/markers
+
+
     # controller
     python controller_test.py 10
 
@@ -56,6 +59,32 @@
         есть еще fcu_url. 
         Там телеметрию указываем, что-то вроде /dev/ttyUSB0:921600 
         (баудрейт в конце)
+
+## Connect to VICON through ethernet
+
+on Omega (nick's pc) add IP in vicon's network
+
+    sudo su
+    vim /etc/network/interfaces
+
+    auto eth0         
+    allow-hotplug eth0                                      
+    iface eth0 inet static       
+        address 192.168.10.249      
+        netmask 255.255.255.0 
+
+In vicon.launch change IP to ethernet:
+
+    <param name="datastream_hostport" value="192.168.10.1:801" type="str" />
+
+Go to internet - edit connections - IPv4 Settings
+
+add address:
+192.168.10.125  (can be anything)
+netmask 24
+
+DNS servers: 192.168.10.254
+
 
 ## Connect to the big drone
 
@@ -99,13 +128,15 @@ Check network config:
 ## Configure network to get visualization remotely
 Your working computer and NUC need to now about each other.
 
+here is complete instruction (first link)
 
-http://wiki.ros.org/multimaster_fkie
+    https://roboticsknowledgebase.com/wiki/networking/ros-distributed/
+    http://www.iri.upc.edu/files/scidoc/1607-Multi-master-ROS-systems.pdf
 
+
+<!-- http://wiki.ros.org/multimaster_fkie
 Install multimaster_fkie to create multimaster network:
-
-    sudo apt-get install ros-kinetic-multimaster-fkie
-
+    sudo apt-get install ros-kinetic-multimaster-fkie -->
 
 On your working computer:
 
@@ -125,6 +156,8 @@ On robot:
     qgroundcontrol. Widgets -> Analyse
     
     
-    там скрипт mocap2pixhwak делает преобразование координат с вайкона в маврос 
+## Mocap to Pixhawk
+
+    скрипт mocap2pixhwak делает преобразование координат с вайкона в маврос 
     и в нужный топик локализации отправляет данные 
     (/mavros/vision_position/pose, из визуальной позиции потом уже EKF в local_pose публикует)

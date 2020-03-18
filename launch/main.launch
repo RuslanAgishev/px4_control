@@ -4,10 +4,10 @@
     <!-- Now using ROS_MASTER_URI, not multimaster -->
     <!-- <include file="$(find px4_control)/launch/aerovr_omega_multimaster.launch" /> -->
 
-    <node pkg="px4_control" 
+<!--     <node pkg="px4_control" 
     	type="position_interactive_control_vr.py" 
     	name="position_interactive_control_vr" 
-    	output="screen"/>
+    	output="screen"/> -->
 
     <!-- test -->
 <!--     <node pkg="px4_control" 
@@ -17,6 +17,8 @@
 
 <include file="$(find vicon_bridge)/launch/vicon.launch"/>
 <!-- <include file="$(find crazyflie_demo)/launch/connect_crazyflie4.launch"/> -->
+
+    <node name="mocap2pixhawk" pkg="px4_control" type="mocap2pixhawk.py" output="screen" />
 
     <node
         pkg="rviz"
@@ -28,5 +30,6 @@
 
     <!-- graphs visualization -->
     <node pkg="rqt_plot" type="rqt_plot" name="rqt_plot1" args="/mavros/local_position/pose/pose/position/x:y:z"/>
+
 
 </launch>
