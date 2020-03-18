@@ -1,18 +1,18 @@
 <?xml version="1.0"?>
 <launch>
 
-    <include file="$(find px4_control)/launch/aerovr_drone_multimaster.launch" />
+    <!-- <include file="$(find px4_control)/launch/aerovr_drone_multimaster.launch" /> -->
 
 	<arg name="fcu_url" default="/dev/ttyUSB0:921600" />
-	<arg name="gcs_url" default="udp://@192.168.1.183" />  
+	<arg name="gcs_url" default="udp://@192.168.88.224" />  
     <!-- @192.168.1.183 - this param we change from terminal, no need to change it here -->
 
-    <node pkg="vicon_bridge" type="vicon_bridge" name="vicon" output="log">
+<!--  value="192.168.10.1 -->
+<!--     <node pkg="vicon_bridge" type="vicon_bridge" name="vicon" output="log">
         <param name="stream_mode" value="ClientPull" type="str" />
         <param name="datastream_hostport" value="192.168.88.223:801" type="str" />  
-        <!--  value="192.168.10.1 -->
         <param name="tf_ref_frame_id" value="/world" type="str" />
-    </node>
+    </node> -->
 
     <include file="$(find mavros)/launch/px4.launch">
         <arg name="gcs_url" value="$(arg gcs_url)"/>

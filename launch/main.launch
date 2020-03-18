@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
 
-    <include file="$(find px4_control)/launch/aerovr_omega_multimaster.launch" />
+    <!-- <include file="$(find px4_control)/launch/aerovr_omega_multimaster.launch" /> -->
 
     <node pkg="px4_control" 
     	type="position_interactive_control_vr.py" 
@@ -17,15 +17,15 @@
 <!-- <include file="$(find vicon_bridge)/launch/vicon.launch"/> -->
 <!-- <include file="$(find crazyflie_demo)/launch/connect_crazyflie4.launch"/> -->
 
-    <node
+<!--     <node
         pkg="rviz"
         name="$(anon rviz-1)"
         type="rviz"
         args="-d $(find px4_control)/config/pos_controller.rviz"
         output="log"
-    />
+    /> -->
 
     <!-- graphs visualization -->
-    <node pkg="rqt_plot" type="rqt_plot" name="rqt_plot1" args="/mavros/local_position/pose/pose/position/x:y:z"/>
+<!--     <node pkg="rqt_plot" type="rqt_plot" name="rqt_plot1" args="/mavros/local_position/pose/pose/position/x:y:z"/> -->
 
 </launch>
