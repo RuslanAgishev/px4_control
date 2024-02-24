@@ -84,3 +84,42 @@ roslaunch px4_control drone.launch gcs_url:=udp://@GROUND_STATION_IP
 ```bash
 rosrun px4_control drone_test.py
 ```
+
+## Citation
+The package was used in the following papers. Feel free to cite them if you find the work relevant to your research.
+```bibtex
+@INPROCEEDINGS{8746668,
+  author={Kalinov, Ivan and Safronov, Evgenii and Agishev, Ruslan and Kurenkov, Mikhail and Tsetserukou, Dzmitry},
+  booktitle={2019 IEEE 89th Vehicular Technology Conference (VTC2019-Spring)}, 
+  title={High-Precision UAV Localization System for Landing on a Mobile Collaborative Robot Based on an IR Marker Pattern Recognition}, 
+  year={2019},
+  volume={},
+  number={},
+  pages={1-6},
+  keywords={Robot kinematics;Cameras;Unmanned aerial vehicles;Robot vision systems;Task analysis},
+  doi={10.1109/VTCSpring.2019.8746668}}
+```
+```bibtex
+@INPROCEEDINGS{8981574,
+  author={Yashin, Grigoriy A. and Trinitatova, Daria and Agishev, Ruslan T. and Ibrahimov, Roman and Tsetserukou, Dzmitry},
+  booktitle={2019 19th International Conference on Advanced Robotics (ICAR)}, 
+  title={AeroVr: Virtual Reality-based Teleoperation with Tactile Feedback for Aerial Manipulation}, 
+  year={2019},
+  volume={},
+  number={},
+  pages={767-772},
+  keywords={},
+  doi={10.1109/ICAR46387.2019.8981574}}
+```
+```bibtex
+@INPROCEEDINGS{9476826,
+  author={Kalinov, Ivan and Petrovsky, Alexander and Agishev, Ruslan and Karpyshev, Pavel and Tsetserukou, Dzmitry},
+  booktitle={2021 International Conference on Unmanned Aircraft Systems (ICUAS)}, 
+  title={Impedance-based Control for Soft UAV Landing on a Ground Robot in Heterogeneous Robotic System}, 
+  year={2021},
+  volume={},
+  number={},
+  pages={1653-1658},
+  keywords={Legged locomotion;Force measurement;Automation;Force;Robot sensing systems;Impedance;Force sensors},
+  doi={10.1109/ICUAS51884.2021.9476826}}
+```
